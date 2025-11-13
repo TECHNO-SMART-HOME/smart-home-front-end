@@ -18,6 +18,7 @@ export default function TabLayout() {
 
         // 4. Define the style for the tab bar itself
         tabBarStyle: styles.tabBar,
+        tabBarItemStyle: styles.tabBarItem,
       }}
     >
       <Tabs.Screen
@@ -62,10 +63,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: 90,
     backgroundColor: "#E16428",
+    paddingHorizontal: 32,
+    paddingTop: 18,
+    paddingBottom: 24,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
+  },
+  tabBarItem: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 4,
   },
 });
