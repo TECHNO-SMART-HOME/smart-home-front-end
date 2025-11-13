@@ -5,19 +5,21 @@ import {
   FlatList,
   Image,
 } from 'react-native'
-import React, { useState } from 'react' // 1. Import useState
+import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DisplayDeviceAdd from './displayDeviceAdd' // 2. Import the new screen
+import DisplayDeviceAdd from './displayDeviceAdd'
+import Confirmation from './confirmation'
+import ConnectWifi from './connectWifi' // 1. Import the new wifi screen
 
 // Define the type for a new device in the list
-export type NewDeviceItem = { // Exporting type to be used by DisplayDeviceAdd
+export type NewDeviceItem = {
   id: string
   name: string
-  image: any // Use 'any' for require()
+  image: any
 }
 
-// Data for the list, based on your screenshot and assets
+// Data for the list
 const NEW_DEVICE_DATA: NewDeviceItem[] = [
   {
     id: '1',
@@ -41,28 +43,28 @@ const NEW_DEVICE_DATA: NewDeviceItem[] = [
   },
 ]
 
-// Define the component's props, including the 'onClose' function
 type AddNewDeviceProps = {
-  room: string;
-  onClose: () => void // Function passed from the parent to close the modal
+  room: string
+  onClose: () => void
 }
 
 export default function AddNewDevice({ room, onClose }: AddNewDeviceProps) {
-  // 3. Add state to track which device is selected
+  // 2. Add 'wifi' to the possible steps
+  const [step, setStep] = useState<'list' | 'detail' | 'confirm' | 'wifi'>('list')
   const [selectedDevice, setSelectedDevice] = useState<NewDeviceItem | null>(
     null,
   )
 
-  // Renders a single row in the "Add" list
   const renderDeviceItem = ({ item }: { item: NewDeviceItem }) => (
     <TouchableOpacity
       className="flex-row items-center justify-between p-4 border-b border-gray-700"
       activeOpacity={0.7}
-      // 4. Set the selected device on press
-      onPress={() => setSelectedDevice(item)}
+      onPress={() => {
+        setSelectedDevice(item)
+        setStep('detail')
+      }}
     >
       <View className="flex-row items-center gap-4">
-        {/* Use a smaller, contained image for the list */}
         <Image source={item.image} className="w-12 h-12" resizeMode="contain" />
         <Text className="text-white text-lg">{item.name}</Text>
       </View>
@@ -70,33 +72,55 @@ export default function AddNewDevice({ room, onClose }: AddNewDeviceProps) {
     </TouchableOpacity>
   )
 
-  // 5. Check the state. If a device is selected, show the detail screen.
-  if (selectedDevice) {
+  // 3. Add a new render block for the 'wifi' step
+  // --- STEP 4: WIFI CONNECT ---
+  if (step === 'wifi' && selectedDevice) {
     return (
-      // We wrap this in a SafeAreaView so it respects notches,
-      // and match the dark color
+      <ConnectWifi
+        device={selectedDevice}
+        wifiName="ISABELLA PISO WIFI" // You can make this dynamic
+        onCloseModal={onClose}
+      />
+    )
+  }
+
+  // --- STEP 3: CONFIRMATION ---
+  if (step === 'confirm' && selectedDevice) {
+    return (
+      <Confirmation
+        // 4. THIS IS THE FIX: Set step to 'wifi'
+        onContinue={() => {
+          setStep('wifi')
+          // You can start the "real" connection logic here
+        }}
+        onBack={() => setStep('detail')}
+        onCloseModal={onClose}
+      />
+    )
+  }
+
+  // --- STEP 2: DEVICE DETAIL ---
+  // Note: Your DisplayDeviceAdd prop is 'onAdd', which is correct
+  // for the file you provided
+  if (step === 'detail' && selectedDevice) {
+    return (
       <SafeAreaView className="flex-1 bg-[#222222]">
         <DisplayDeviceAdd
-            currentRoom = {room}
+          currentRoom={room}
           device={selectedDevice}
-          // The "X" button goes back to the list
-          onClose={() => setSelectedDevice(null)}
-          // The "Add" button closes the entire modal
+          onClose={() => setStep('list')}
           onAdd={() => {
-            // Add your logic to save the device here
-            // ...
-            // Then close the modal
-            onClose()
+            setStep('confirm')
           }}
         />
       </SafeAreaView>
     )
   }
 
-  // 6. If no device is selected, show the default list screen
+  // --- STEP 1: DEVICE LIST (default) ---
   return (
     <SafeAreaView className="flex-1 rounded-3xl overflow-hidden bg-[#2C2C2C]">
-      {/* Header matching your screenshot */}
+      {/* Header */}
       <View className="flex-row items-center p-4 border-b border-gray-600">
         <TouchableOpacity onPress={onClose} className="p-2">
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -106,7 +130,7 @@ export default function AddNewDevice({ room, onClose }: AddNewDeviceProps) {
         </Text>
       </View>
 
-      {/* List of devices to add */}
+      {/* List */}
       <FlatList
         data={NEW_DEVICE_DATA}
         renderItem={renderDeviceItem}

@@ -66,7 +66,7 @@ export default function DisplayDeviceAdd({
       <View className="p-6 pt-0">
         <TouchableOpacity
           onPress={onAdd}
-          className="bg-[#E87C53] rounded-full p-4 items-center"
+          className="bg-[#2BD429] rounded-full p-4 items-center"
         >
           <Text className="text-white text-lg font-bold">Add Device</Text>
         </TouchableOpacity>
