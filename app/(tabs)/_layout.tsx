@@ -18,11 +18,13 @@ export default function TabLayout() {
 
         // 4. Define the style for the tab bar itself
         tabBarStyle: styles.tabBar,
+        tabBarItemStyle: styles.tabBarItem,
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
+          tabBarItemStyle: styles.tabBarItemLeft,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="dots-grid" size={30} color={color} />
           ),
@@ -31,6 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="stats"
         options={{
+          tabBarItemStyle: styles.tabBarItemCenter,
           tabBarIcon: ({ color }) => (
             <Ionicons name="stats-chart-outline" size={30} color={color} />
           ),
@@ -39,6 +42,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="discover"
         options={{
+          tabBarItemStyle: styles.tabBarItemCenter,
           tabBarIcon: ({ color }) => (
             <Ionicons name="compass-outline" size={30} color={color} />
           ),
@@ -47,6 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
+          tabBarItemStyle: styles.tabBarItemRight,
           tabBarIcon: ({ color }) => (
             <Ionicons name="settings-outline" size={30} color={color} />
           ),
@@ -62,10 +67,36 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: 90,
     backgroundColor: "#E16428",
+    paddingHorizontal: 32,
+    paddingTop: 18,
+    paddingBottom: 24,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
+  },
+  tabBarItem: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 4,
+    flex: 1,
+  },
+  tabBarItemLeft: {
+    alignItems: "flex-start",
+    paddingTop: 4,
+    paddingLeft: 12,
+    flex: 1,
+  },
+  tabBarItemCenter: {
+    alignItems: "center",
+    paddingTop: 4,
+    flex: 1,
+  },
+  tabBarItemRight: {
+    alignItems: "flex-end",
+    paddingTop: 4,
+    paddingRight: 12,
+    flex: 1,
   },
 });
