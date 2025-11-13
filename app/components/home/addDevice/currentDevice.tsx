@@ -1,6 +1,14 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Modal, // 1. Import Modal
+} from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import AddNewDevice from './addNewDevice' // 2. Import your new screen
 
 // 1. Define the types for your devices
 type Device = {
@@ -28,7 +36,7 @@ const MOCK_DEVICES: DeviceGridItem[] = [
     isOn: true,
     image: require('../../../../assets/resources/smart-plug.png'), // Example icon
   },
-    {
+  {
     id: '3',
     name: 'Electricity Monitoring',
     isOn: true,
@@ -71,6 +79,8 @@ const SimpleToggle = ({
 
 export default function CurrentDevice() {
   const [devices, setDevices] = useState<DeviceGridItem[]>(MOCK_DEVICES)
+  // 3. Add state to control modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   // 4. Function to handle toggling a device's state
   const handleToggle = (id: string) => {
@@ -93,6 +103,7 @@ export default function CurrentDevice() {
           className="flex-1 items-center justify-center bg-[#363333] rounded-2xl p-5"
           // We use minHeight and flexBasis to ensure 2-column grid consistency
           style={{ minHeight: 170, flexBasis: '48%' }}
+          onPress={() => setIsModalVisible(true)} // 4. Set modal visible on press
         >
           <Ionicons name="add" size={72} color="#555" />
         </TouchableOpacity>
@@ -112,7 +123,6 @@ export default function CurrentDevice() {
         {/* Icon */}
         {/* <Ionicons name={device.image} size={48} color="white" /> */}
         <Image source={device.image} className="w-20 h-20" resizeMode="cover" />
-        
 
         {/* Device Name */}
         <Text className="text-white text-lg font-bold mt-3 text-center">
@@ -133,24 +143,40 @@ export default function CurrentDevice() {
     )
   }
 
-  // 6. The FlatList component
-  return (
-    <FlatList
-      data={devices}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      numColumns={2}
-      showsVerticalScrollIndicator={false}
-      // Styles for the list container itself
-      contentContainerStyle={{
-        paddingTop: 24, // Add space above the grid
-        paddingHorizontal: 4, // Align grid with modal padding
-        gap: 16, // Vertical gap between rows
-      }}
-      // Style to add horizontal gap between columns
-      columnWrapperStyle={{
-        gap: 16,
-      }}
-    />
+  // 6. The return statement now includes the FlatList AND the Modal
+return (
+    <View className="flex-1">
+      <FlatList
+        data={devices}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: 24,
+          paddingHorizontal: 4,
+          gap: 16,
+        }}
+        columnWrapperStyle={{
+          gap: 16,
+        }}
+      />
+
+      <Modal
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+        animationType="slide" // Use "slide" animation
+        transparent={true} // Set modal to transparent so your custom background shows
+        // REMOVE presentationStyle="pageSheet"
+      >
+        {/*
+          We need a wrapper View here to push your AddNewDevice to the bottom
+          and apply the rounded corners and dark background directly to it.
+        */}
+        <View className="flex-1 justify-end">
+          <AddNewDevice onClose={() => setIsModalVisible(false)} />
+        </View>
+      </Modal>
+    </View>
   )
 }
