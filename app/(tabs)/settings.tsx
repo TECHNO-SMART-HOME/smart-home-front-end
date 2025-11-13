@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
@@ -53,6 +54,7 @@ const preferenceItems = [
 ];
 
 export default function Settings() {
+  const router = useRouter();
   const [fireAlert, setFireAlert] = useState(true);
   const [floodAlert, setFloodAlert] = useState(false);
   const [reminder, setReminder] = useState(true);
@@ -168,6 +170,7 @@ export default function Settings() {
             style={styles.logoutButton}
             activeOpacity={0.8}
             accessibilityRole="button"
+            onPress={() => router.replace("/")}
           >
             <Text style={styles.logoutText}>LOG OUT</Text>
           </TouchableOpacity>
