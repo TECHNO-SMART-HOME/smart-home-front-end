@@ -1,10 +1,11 @@
 // Use SafeAreaView to automatically handle the status bar
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import TopSection from "../components/home/topSection"
 import Weather from '../components/home/weather'
 import Room from '../components/home/room'
+import Add from '../components/home/add'
 
 const bgColor = "#1C1E22"
 export default function home() {
@@ -15,6 +16,11 @@ export default function home() {
     >
       <TopSection/>
       <Weather/>
+
+      <View className='flex flex-row justify-between items-center mb-2'>
+        <Text className='text-2xl font-bold text-white'>Your Rooms</Text>
+        <Add/>
+      </View>
       <Room/>
     </SafeAreaView>
   )

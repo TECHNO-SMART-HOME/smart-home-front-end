@@ -129,7 +129,7 @@ export default function weather() {
         </View>
 
         {/* Bottom Section: Weather Details Grid */}
-        <View className="border-t border-gray-600 pt-4">
+        <View className="pt-4">
           <View className="flex-row justify-between items-center">
             {/* Sensible */}
             <View className="items-center gap-1.5 flex-1">
@@ -138,7 +138,7 @@ export default function weather() {
             </View>
 
             {/* Precipitation */}
-            <View className="items-center gap-1.5 flex-1 border-l border-r border-gray-600 px-2">
+            <View className="items-center gap-1.5 flex-1 border-gray-600 px-2">
               <Text className="text-xl font-bold text-white">{Math.round(weatherData?.precipitation || 0)}%</Text>
               <Text className="text-sm text-gray-400 font-medium">Precipitation</Text>
             </View>
@@ -150,7 +150,7 @@ export default function weather() {
             </View>
 
             {/* Wind */}
-            <View className="items-center gap-1.5 flex-1 border-l border-gray-600 pl-2">
+            <View className="items-center gap-1.5 flex-1 border-gray-600 pl-2">
               <Text className="text-xl font-bold text-white">{weatherData?.windSpeed}km/h</Text>
               <Text className="text-sm text-gray-400 font-medium">Wind</Text>
             </View>

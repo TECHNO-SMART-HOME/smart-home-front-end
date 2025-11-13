@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList, // 1. Import FlatList
+  StyleSheet,
+} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import React, { useState } from 'react'
 
@@ -35,82 +42,74 @@ export default function room() {
       devices: 3,
       image: require('../../../assets/images/study-room.png'),
     },
+    {
+      id: '5',
+      name: 'Study Room', // This will now be rendered
+      devices: 3,
+      image: require('../../../assets/images/study-room.png'),
+    },
+    {
+      id: '6',
+      name: 'Study Room', // This will also be rendered
+      devices: 3,
+      image: require('../../../assets/images/study-room.png'),
+    },
   ])
 
-  return (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="px-5 py-6 gap-4">
-        {/* Header */}
-        <View className="flex-row justify-between items-center mb-2">
-          <Text className="text-2xl font-bold text-white">Your Rooms</Text>
-          <TouchableOpacity className="bg-gray-700 rounded-full p-2">
-            <Ionicons name="add" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
+  // This function renders a single room card
+  const renderRoom = ({ item }: { item: Room }) => (
+    <TouchableOpacity
+      key={item.id}
+      // 'flex-1' makes it take up half the width
+      className="flex-1 rounded-2xl p-5 items-center"
+      style={{ 
+            backgroundColor: '#363333', 
+            flexBasis: '48%',
 
-        {/* Rooms Grid */}
-        <View className="gap-4">
-          {/* Row 1 */}
-          <View className="flex-row gap-4">
-            {rooms.slice(0, 2).map((room) => (
-              <TouchableOpacity
-                key={room.id}
-                className="flex-1 rounded-2xl p-5 items-center gap-4"
-                style={{ backgroundColor: '#363333' }}
-              >
-                {/* Room Image Circle */}
-                <View className="w-28 h-28 rounded-full overflow-hidden border-4 border-gray-500">
-                  <Image
-                    source={room.image}
-                    className="w-full h-full"
-                    resizeMode="cover"
-                  />
-                </View>
-
-                {/* Room Name */}
-                <Text className="text-lg font-bold text-white text-center">
-                  {room.name}
-                </Text>
-
-                {/* Device Count */}
-                <Text className="text-sm text-gray-400">
-                  {room.devices} devices
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Row 2 */}
-          <View className="flex-row gap-4">
-            {rooms.slice(2, 4).map((room) => (
-              <TouchableOpacity
-                key={room.id}
-                className="flex-1 rounded-2xl p-5 items-center gap-4"
-                style={{ backgroundColor: '#363333' }}
-              >
-                {/* Room Image Circle */}
-                <View className="w-28 h-28 rounded-full overflow-hidden border-4 border-gray-500">
-                  <Image
-                    source={room.image}
-                    className="w-full h-full"
-                    resizeMode="cover"
-                  />
-                </View>
-
-                {/* Room Name */}
-                <Text className="text-lg font-bold text-white text-center">
-                  {room.name}
-                </Text>
-
-                {/* Device Count */}
-                <Text className="text-sm text-gray-400">
-                  {room.devices} devices
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+        }}
+    >
+      {/* Room Image Circle */}
+      <View className="w-28 h-28 rounded-full overflow-hidden">
+        <Image
+          source={item.image}
+          className="w-full h-full"
+          resizeMode="cover"
+        />
       </View>
-    </ScrollView>
+
+      {/* Room Name */}
+      <Text className="text-lg font-bold text-white text-center">
+        {item.name}
+      </Text>
+
+      {/* Device Count */}
+      <Text className="text-sm text-gray-400">
+        {item.devices} devices
+      </Text>
+    </TouchableOpacity>
+  )
+
+  return (
+    // 2. Replace ScrollView with FlatList
+    <FlatList
+      data={rooms} // The full array of rooms
+      renderItem={renderRoom} // The function to render each item
+      keyExtractor={(item) => item.id}
+      numColumns={2} // This creates your 2-column grid
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.listContainer}
+      columnWrapperStyle={styles.row}
+    />
   )
 }
+
+const styles = StyleSheet.create({
+  listContainer: {
+    paddingVertical: 24,
+    gap: 16,
+    paddingBottom: 90, 
+  },
+  row: {
+    gap: 16,
+  },
+})
