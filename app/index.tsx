@@ -18,11 +18,9 @@ const SmartHomeLogo = () => (
     </View>
 );
 
-// 1. (FIX #2) Define a specific type for your tab states
 type AuthTab = "signIn" | "register";
 
 const AuthScreen = () => {
-    // 2. (FIX #2) Apply the type to your state
     const [activeTab, setActiveTab] = useState<AuthTab>("signIn"); 
     const [loginEmailOrUsername, setLoginEmailOrUsername] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
@@ -38,7 +36,6 @@ const AuthScreen = () => {
         if (activeTab === "signIn") {
             console.log("Attempting Sign In with:", loginEmailOrUsername, loginPassword);
             
-            // 3. (FIX #1) Add a leading '/' to make the path absolute
             router.replace('/(tabs)/home');
 
         } else {
@@ -47,7 +44,6 @@ const AuthScreen = () => {
         }
     }
 
-    // 4. (FIX #2) Apply the type to the function parameter
     const handleSwitch = (tab: AuthTab) => {
         setActiveTab(tab);
         setLoginEmailOrUsername("");
@@ -192,8 +188,6 @@ const AuthScreen = () => {
 export default AuthScreen
 
 const styles = StyleSheet.create({
-// ... your styles remain unchanged ...
-// (I have omitted them here for brevity)
     loadingContainer: {
         flex: 1,
         backgroundColor: '#1c1e22', 
