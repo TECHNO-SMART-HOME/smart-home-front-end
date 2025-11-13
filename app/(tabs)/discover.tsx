@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const bgColor = "#1C1E22";
 
-type Category = "All" | "Plugs" | "Lights" | "Sensors";
+type Category = "All" | "Plugs" | "Tracker" | "Sensors";
 
 type Product = {
   id: string;
@@ -24,7 +24,7 @@ type Product = {
   image: ImageSourcePropType;
 };
 
-const categories: Category[] = ["All", "Plugs", "Lights", "Sensors"];
+const categories: Category[] = ["All", "Plugs", "Tracker", "Sensors"];
 
 const products: Product[] = [
   {
@@ -52,7 +52,7 @@ const products: Product[] = [
     id: "electricity-monitor",
     name: "Electricity Monitor",
     price: 664,
-    category: "Sensors",
+    category: "Tracker",
     image: require("../../assets/resources/electricity-monitor.png"),
   },
 ];
