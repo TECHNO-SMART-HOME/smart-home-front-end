@@ -3,14 +3,15 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
 } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react' // 1. Import useState
 import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import DisplayDeviceAdd from './displayDeviceAdd' // 2. Import the new screen
 
 // Define the type for a new device in the list
-type NewDeviceItem = {
+export type NewDeviceItem = { // Exporting type to be used by DisplayDeviceAdd
   id: string
   name: string
   image: any // Use 'any' for require()
@@ -42,17 +43,23 @@ const NEW_DEVICE_DATA: NewDeviceItem[] = [
 
 // Define the component's props, including the 'onClose' function
 type AddNewDeviceProps = {
+  room: string;
   onClose: () => void // Function passed from the parent to close the modal
 }
 
-export default function AddNewDevice({ onClose }: AddNewDeviceProps) {
+export default function AddNewDevice({ room, onClose }: AddNewDeviceProps) {
+  // 3. Add state to track which device is selected
+  const [selectedDevice, setSelectedDevice] = useState<NewDeviceItem | null>(
+    null,
+  )
+
   // Renders a single row in the "Add" list
   const renderDeviceItem = ({ item }: { item: NewDeviceItem }) => (
     <TouchableOpacity
       className="flex-row items-center justify-between p-4 border-b border-gray-700"
       activeOpacity={0.7}
-      // You can add an onPress here to navigate to a specific device's setup
-      // onPress={() => { /* Handle adding this specific device */ }}
+      // 4. Set the selected device on press
+      onPress={() => setSelectedDevice(item)}
     >
       <View className="flex-row items-center gap-4">
         {/* Use a smaller, contained image for the list */}
@@ -63,9 +70,32 @@ export default function AddNewDevice({ onClose }: AddNewDeviceProps) {
     </TouchableOpacity>
   )
 
+  // 5. Check the state. If a device is selected, show the detail screen.
+  if (selectedDevice) {
+    return (
+      // We wrap this in a SafeAreaView so it respects notches,
+      // and match the dark color
+      <SafeAreaView className="flex-1 bg-[#222222]">
+        <DisplayDeviceAdd
+            currentRoom = {room}
+          device={selectedDevice}
+          // The "X" button goes back to the list
+          onClose={() => setSelectedDevice(null)}
+          // The "Add" button closes the entire modal
+          onAdd={() => {
+            // Add your logic to save the device here
+            // ...
+            // Then close the modal
+            onClose()
+          }}
+        />
+      </SafeAreaView>
+    )
+  }
+
+  // 6. If no device is selected, show the default list screen
   return (
-    // Use SafeAreaView for a full-screen modal, give it a dark background
-    <SafeAreaView className="flex-1 rounded-3xl overflow-hidden  bg-[#2C2C2C]">
+    <SafeAreaView className="flex-1 rounded-3xl overflow-hidden bg-[#2C2C2C]">
       {/* Header matching your screenshot */}
       <View className="flex-row items-center p-4 border-b border-gray-600">
         <TouchableOpacity onPress={onClose} className="p-2">

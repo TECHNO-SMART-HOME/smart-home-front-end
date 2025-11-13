@@ -58,7 +58,7 @@ export default function ClickRoom({ visible, room, onClose }: ClickRoomProps) {
               {room.devices} Connected Devices
             </Text>
           </View>
-          <CurrentDevice/>
+          <CurrentDevice room={room.name}/>
 
         </View>
       </View>

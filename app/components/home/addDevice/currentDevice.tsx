@@ -77,7 +77,12 @@ const SimpleToggle = ({
   )
 }
 
-export default function CurrentDevice() {
+interface CurrentDeviceProps {
+  room: string
+}
+
+
+export default function CurrentDevice({ room } : CurrentDeviceProps) {
   const [devices, setDevices] = useState<DeviceGridItem[]>(MOCK_DEVICES)
   // 3. Add state to control modal visibility
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -174,7 +179,7 @@ return (
           and apply the rounded corners and dark background directly to it.
         */}
         <View className="flex-1 justify-end">
-          <AddNewDevice onClose={() => setIsModalVisible(false)} />
+          <AddNewDevice room={room} onClose={() => setIsModalVisible(false)} />
         </View>
       </Modal>
     </View>
