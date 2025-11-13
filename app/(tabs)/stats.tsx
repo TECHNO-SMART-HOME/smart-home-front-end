@@ -20,9 +20,9 @@ export default function Stats() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
-               
+                
                 <View style={styles.headerContainer}>
-                    <Text style={styles.discoverTitle}>Statistics</Text>
+                    <Text style={styles.statTitle}>Statistics</Text>
                 </View>
 
 
@@ -43,12 +43,12 @@ export default function Stats() {
                         );
                     })}
                 </View>
-               
+                
                 <View style={styles.summaryCard}>
                     <Text style={[styles.summaryTitle, styles.unnaFontRegular]}>
                         TOTAL ENERGY USAGE ({activeTimePeriod.toUpperCase()})
                     </Text>
-                   
+                    
                     <View style={styles.usageRow}>
                         <Image
                             source={require('../../assets/resources/lightning.png')}
@@ -59,7 +59,7 @@ export default function Stats() {
                         </Text>
                         <Text style={[styles.kwhUnit, styles.unnaFontRegular]}>KWh</Text>
                     </View>
-                   
+                    
                     <Text style={[styles.costValue, styles.unnaFontRegular]}>
                         Total Cost: <Text style={[styles.costAmount, styles.unnaFontBold]}>
                             ${(currentKwh * 0.25).toFixed(2)}
@@ -69,14 +69,14 @@ export default function Stats() {
 
 
                 <Text style={[styles.chartTitle, styles.unnaFontBold]}>Usage Trend</Text>
-               
+                
                 <View style={styles.chartContainer}>
                     <Image
                         source={require('../../assets/resources/chart.png')}
                         style={styles.chartImage}
                         resizeMode="contain"
                     />
-                   
+                    
                     <View style={styles.chartOverlay}>
                         <Text style={[styles.peakText, styles.unnaFontRegular]}>
                             Peak: 1.2 KWh @ 7PM
@@ -126,16 +126,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 5,
-        marginBottom: 0,
     },
-    discoverTitle: {
+    statTitle: {
         color: "#FFFFFF",
         fontSize: 32,
         fontWeight: "700",
         marginTop: 12,
-        marginBottom: 12,
-        paddingBottom: 12,
+        marginBottom: 24,
         textAlign: "center",
         alignSelf: "center",
     },
@@ -289,5 +286,3 @@ const styles = StyleSheet.create({
         textAlign: 'right',
     },
 });
-
-
