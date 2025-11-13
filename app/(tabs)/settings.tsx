@@ -198,10 +198,12 @@ const styles = StyleSheet.create({
   },
   screenTitle: {
     color: "#FFFFFF",
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "700",
     textAlign: "center",
-    marginBottom: 28,
+    marginBottom: 24,
+    paddingBottom: 12,
+    alignSelf: "center",
   },
   section: {
     marginBottom: 26,
