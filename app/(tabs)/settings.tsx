@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const bgColor = "#14161B";
+const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
 const dividerColor = "rgba(255,255,255,0.12)";
 const accent = "#EC552B";
