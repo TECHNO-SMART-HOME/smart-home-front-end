@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image, Modal, Dimensions } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import CurrentDevice from './currentDevice'
 
 interface Room {
   id: string
@@ -46,7 +47,7 @@ export default function ClickRoom({ visible, room, onClose }: ClickRoomProps) {
           </View>
 
           {/* Modal Body */}
-          <View className="items-center">
+          <View className="items-center mb-2">
             <Image
               source={room.image}
               className="w-44 h-44 rounded-full mb-5"
@@ -57,6 +58,8 @@ export default function ClickRoom({ visible, room, onClose }: ClickRoomProps) {
               {room.devices} Connected Devices
             </Text>
           </View>
+          <CurrentDevice/>
+
         </View>
       </View>
     </Modal>
