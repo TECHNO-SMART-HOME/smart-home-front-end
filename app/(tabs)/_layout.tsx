@@ -29,7 +29,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="chart"
+        name="stats"
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="stats-chart-outline" size={30} color={color} />
@@ -37,7 +37,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="compass"
+        name="discover"
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="compass-outline" size={30} color={color} />
