@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 
 export default function TabLayout() {
@@ -26,7 +26,7 @@ export default function TabLayout() {
         options={{
           tabBarItemStyle: styles.tabBarItemLeft,
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="dots-grid" size={30} color={color} />
+            <Ionicons name="grid-outline" size={27} color={color} />
           ),
         }}
       />
@@ -35,7 +35,7 @@ export default function TabLayout() {
         options={{
           tabBarItemStyle: styles.tabBarItemCenter,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="stats-chart-outline" size={30} color={color} />
+            <Ionicons name="bar-chart-outline" size={27} color={color} />
           ),
         }}
       />
@@ -44,7 +44,7 @@ export default function TabLayout() {
         options={{
           tabBarItemStyle: styles.tabBarItemCenter,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="compass-outline" size={30} color={color} />
+            <Ionicons name="compass-outline" size={27} color={color} />
           ),
         }}
       />
@@ -53,7 +53,7 @@ export default function TabLayout() {
         options={{
           tabBarItemStyle: styles.tabBarItemRight,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="settings-outline" size={30} color={color} />
+            <Ionicons name="settings-outline" size={27} color={color} />
           ),
         }}
       />
