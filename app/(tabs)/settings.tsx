@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useNotificationSettings } from "../context/NotificationSettingsContext";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
@@ -55,9 +56,14 @@ const preferenceItems = [
 
 export default function Settings() {
   const router = useRouter();
-  const [fireAlert, setFireAlert] = useState(true);
-  const [floodAlert, setFloodAlert] = useState(false);
-  const [reminder, setReminder] = useState(true);
+  const {
+    fireAlertEnabled,
+    floodAlertEnabled,
+    reminderEnabled,
+    setFireAlertEnabled,
+    setFloodAlertEnabled,
+    setReminderEnabled,
+  } = useNotificationSettings();
 
   const renderCard = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
@@ -108,8 +114,8 @@ export default function Settings() {
                   <Text style={styles.rowLabel}>Fire Alert</Text>
                 </View>
                 <Switch
-                  value={fireAlert}
-                  onValueChange={setFireAlert}
+                  value={fireAlertEnabled}
+                  onValueChange={setFireAlertEnabled}
                   thumbColor="#FFFFFF"
                   trackColor={{ false: "#767680", true: "#5DD66D" }}
                 />
@@ -120,8 +126,8 @@ export default function Settings() {
                   <Text style={styles.rowLabel}>Flood Alert</Text>
                 </View>
                 <Switch
-                  value={floodAlert}
-                  onValueChange={setFloodAlert}
+                  value={floodAlertEnabled}
+                  onValueChange={setFloodAlertEnabled}
                   thumbColor="#FFFFFF"
                   trackColor={{ false: "#767680", true: "#5DD66D" }}
                 />
@@ -136,8 +142,8 @@ export default function Settings() {
                   <Text style={styles.rowLabel}>Smart Reminder</Text>
                 </View>
                 <Switch
-                  value={reminder}
-                  onValueChange={setReminder}
+                  value={reminderEnabled}
+                  onValueChange={setReminderEnabled}
                   thumbColor="#FFFFFF"
                   trackColor={{ false: "#767680", true: "#5DD66D" }}
                 />

@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
+import { useNotificationSettings } from '../context/NotificationSettingsContext';
 
 // REPLACE WITH YOUR IP
 const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/api/readings`;
@@ -10,13 +11,22 @@ export default function GlobalFireAlert() {
   const [visible, setVisible] = useState(false);
   const [lastAlertId, setLastAlertId] = useState(null);
   const router = useRouter();
+  const { fireAlertEnabled } = useNotificationSettings();
 
   useEffect(() => {
     const interval = setInterval(checkForFire, 3000); // Check every 3 seconds
     return () => clearInterval(interval);
-  }, [lastAlertId]);
+  }, [lastAlertId, fireAlertEnabled]);
+
+  useEffect(() => {
+    if (!fireAlertEnabled && visible) {
+      setVisible(false);
+    }
+  }, [fireAlertEnabled, visible]);
 
   const checkForFire = async () => {
+    if (!fireAlertEnabled) return;
+
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
