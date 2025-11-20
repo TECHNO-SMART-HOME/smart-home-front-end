@@ -14,6 +14,8 @@ export type CurrentWeather = {
   windSpeed?: number;
   cloudCover?: number;
   precipitationChance?: number;
+  isHeavyRain: boolean;
+  meetsFloodThresholds: boolean;
 };
 
 const OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -76,6 +78,8 @@ const mapConditionToDisplay = (
   return { icon: "weather-cloudy", description: fallbackDescription };
 };
 
+const heavyRainWmoCodes = new Set([63, 65, 66, 67, 82, 95, 96, 99]);
+
 const wmoCodeGroups: { codes: number[]; icon: string; description: string }[] = [
   { codes: [0], icon: "weather-sunny", description: "Clear" },
   { codes: [1], icon: "weather-sunny-alert", description: "Mostly Clear" },
@@ -124,25 +128,40 @@ async function fetchOpenMeteoWeather({
   const weather = await response.json();
   const info = fallbackWeatherInfo(weather.current?.weather_code);
 
+  const precipitationValue = weather.current?.precipitation ?? 0;
+  const wmoCode = weather.current?.weather_code;
+
+  const windSpeed =
+    typeof weather.current?.wind_speed_10m === "number"
+      ? Math.round(weather.current.wind_speed_10m)
+      : undefined;
+
+  const humidityValue = Math.round(weather.current?.relative_humidity_2m ?? 0);
+  const precipitationChance =
+    typeof weather.hourly?.precipitation_probability?.[0] === "number"
+      ? Math.round(weather.hourly.precipitation_probability[0])
+      : undefined;
+
+  const meetsFloodThresholds =
+    (precipitationChance ?? 0) >= 70 ||
+    (windSpeed ?? 0) >= 60;
+
   return {
     temp: Math.round(weather.current?.temperature_2m ?? 0),
-    humidity: Math.round(weather.current?.relative_humidity_2m ?? 0),
+    humidity: humidityValue,
     location:
       city && country ? `${city}, ${country}` : "Current Location",
     description: info.description,
     icon: info.icon,
-    windSpeed:
-      typeof weather.current?.wind_speed_10m === "number"
-        ? Math.round(weather.current.wind_speed_10m)
-        : undefined,
+    windSpeed,
     cloudCover:
       typeof weather.hourly?.cloud_cover?.[0] === "number"
         ? Math.round(weather.hourly.cloud_cover[0])
         : undefined,
-    precipitationChance:
-      typeof weather.hourly?.precipitation_probability?.[0] === "number"
-        ? Math.round(weather.hourly.precipitation_probability[0])
-        : undefined,
+    precipitationChance,
+    isHeavyRain:
+      heavyRainWmoCodes.has(wmoCode) || precipitationValue >= 10,
+    meetsFloodThresholds,
   };
 }
 
@@ -180,8 +199,22 @@ export async function fetchCurrentWeather({
       capitalizeWords(condition?.description ?? "Weather"),
     );
 
+    const rainVolume = typeof data.rain?.["1h"] === "number" ? data.rain["1h"] : 0;
     const cloudiness =
       typeof data.clouds?.all === "number" ? data.clouds.all : undefined;
+    const heavyRainConditionIds = new Set([502, 503, 504, 522, 531]);
+
+    const windSpeedValue =
+      typeof data.wind?.speed === "number"
+        ? Math.round(data.wind.speed)
+        : undefined;
+
+    const precipitationProbability =
+      rainVolume > 0 ? Math.min(100, Math.round(rainVolume * 50)) : cloudiness;
+
+    const meetsFloodThresholds =
+      (precipitationProbability ?? 0) >= 70 ||
+      (windSpeedValue ?? 0) >= 60;
 
     return {
       temp: Math.round(data.main?.temp ?? 0),
@@ -189,15 +222,12 @@ export async function fetchCurrentWeather({
       location: friendlyLocation,
       description,
       icon,
-      windSpeed:
-        typeof data.wind?.speed === "number"
-          ? Math.round(data.wind.speed)
-          : undefined,
+      windSpeed: windSpeedValue,
       cloudCover: cloudiness,
-      precipitationChance:
-        typeof data.rain?.["1h"] === "number"
-          ? Math.min(100, Math.round(data.rain["1h"] * 100))
-          : undefined,
+      precipitationChance: precipitationProbability,
+      isHeavyRain:
+        heavyRainConditionIds.has(condition?.id ?? -1) || rainVolume >= 10,
+      meetsFloodThresholds,
     };
   } catch (error) {
     console.warn("OpenWeather request failed. Falling back to Open-Meteo.", error);
