@@ -1,6 +1,7 @@
 import { View, Text, ActivityIndicator } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState, useEffect } from 'react'
+import { useLocation } from '../../context/LocationContext'
 
 interface WeatherData {
   temp: number
@@ -15,41 +16,53 @@ export default function weather() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { location } = useLocation()
 
   useEffect(() => {
-    fetchWeather()
-  }, [])
+    let isMounted = true
 
-  const fetchWeather = async () => {
-    try {
-      setLoading(true)
-      
-      // CDO (Cagayan de Oro) coordinates
-      const latitude = 8.4866
-      const longitude = 124.6483
+    const fetchWeather = async () => {
+      try {
+        setLoading(true)
+        const weatherResponse = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation&temperature_unit=celsius`
+        )
+        const weather = await weatherResponse.json()
 
-      // Fetch weather data using Open-Meteo API
-      const weatherResponse = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation&temperature_unit=celsius`
-      )
-      const weather = await weatherResponse.json()
+        if (!isMounted) {
+          return
+        }
 
-      setWeatherData({
-        temp: Math.round(weather.current.temperature_2m),
-        humidity: weather.current.relative_humidity_2m,
-        condition: weather.current.weather_code,
-        location: 'CDO, Philippines',
-        windSpeed: Math.round(weather.current.wind_speed_10m),
-        precipitation: weather.current.precipitation || 0,
-      })
-      setError(null)
-    } catch (err) {
-      setError('Unable to fetch weather')
-      console.log(err)
-    } finally {
-      setLoading(false)
+        setWeatherData({
+          temp: Math.round(weather.current.temperature_2m),
+          humidity: weather.current.relative_humidity_2m,
+          condition: weather.current.weather_code,
+          location: `${location.city}, ${location.country}`,
+          windSpeed:
+            typeof weather.current.wind_speed_10m === 'number'
+              ? Math.round(weather.current.wind_speed_10m)
+              : undefined,
+          precipitation: weather.current.precipitation || 0,
+        })
+        setError(null)
+      } catch (err) {
+        if (isMounted) {
+          setError(`Unable to fetch weather for ${location.city}`)
+        }
+        console.log(err)
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
     }
-  }
+
+    fetchWeather()
+
+    return () => {
+      isMounted = false
+    }
+  }, [location])
 
   const getWeatherIcon = (code: number | undefined): string => {
     if (!code) return 'weather-cloudy'
@@ -124,7 +137,7 @@ export default function weather() {
           {/* Right: Temperature */}
           <View className="items-end">
             <Text className="text-5xl font-bold text-white">{weatherData?.temp}</Text>
-            <Text className="text-base text-gray-400">°</Text>
+            <Text className="text-base text-gray-400">°C</Text>
           </View>
         </View>
 
@@ -151,7 +164,11 @@ export default function weather() {
 
             {/* Wind */}
             <View className="items-center gap-1.5 flex-1 border-gray-600 pl-2">
-              <Text className="text-xl font-bold text-white">{weatherData?.windSpeed}km/h</Text>
+              <Text className="text-xl font-bold text-white">
+                {weatherData?.windSpeed !== undefined
+                  ? `${weatherData.windSpeed}km/h`
+                  : '--'}
+              </Text>
               <Text className="text-sm text-gray-400 font-medium">Wind</Text>
             </View>
           </View>

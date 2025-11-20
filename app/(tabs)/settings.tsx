@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useNotificationSettings } from "../context/NotificationSettingsContext";
+import { useLocation } from "../context/LocationContext";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
@@ -32,11 +33,6 @@ const accountItems = [
 
 const preferenceItems = [
   {
-    id: "language",
-    label: "Language",
-    icon: <MaterialCommunityIcons name="web" size={22} color="#FFF" />,
-  },
-  {
     id: "timezone",
     label: "Time Zone",
     icon: (
@@ -56,6 +52,7 @@ const preferenceItems = [
 
 export default function Settings() {
   const router = useRouter();
+  const { location } = useLocation();
   const {
     fireAlertEnabled,
     floodAlertEnabled,
@@ -153,23 +150,54 @@ export default function Settings() {
 
           {renderCard(
             "Preferences",
-            preferenceItems.map((item, index) => (
+            <>
               <TouchableOpacity
-                key={item.id}
                 style={[
                   styles.row,
-                  index < preferenceItems.length - 1 && styles.rowDivider,
+                  preferenceItems.length > 0 && styles.rowDivider,
                 ]}
+                onPress={() => router.push("/location")}
                 activeOpacity={0.7}
                 accessibilityRole="button"
               >
                 <View style={styles.rowLeft}>
-                  {item.icon}
-                  <Text style={styles.rowLabel}>{item.label}</Text>
+                  <MaterialCommunityIcons
+                    name="map-marker-radius-outline"
+                    size={22}
+                    color="#FFF"
+                  />
+                  <Text style={styles.rowLabel}>Location</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#FFF" />
+                <View style={styles.rowRight}>
+                  <Text
+                    style={styles.rowValue}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {location.city}, {location.country}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color="#FFF" />
+                </View>
               </TouchableOpacity>
-            )),
+
+              {preferenceItems.map((item, index) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.row,
+                    index < preferenceItems.length - 1 && styles.rowDivider,
+                  ]}
+                  activeOpacity={0.7}
+                  accessibilityRole="button"
+                >
+                  <View style={styles.rowLeft}>
+                    {item.icon}
+                    <Text style={styles.rowLabel}>{item.label}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#FFF" />
+                </TouchableOpacity>
+              ))}
+            </>,
           )}
 
           <TouchableOpacity
@@ -239,11 +267,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   rowLabel: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "500",
     marginLeft: 12,
+  },
+  rowValue: {
+    color: "#B0B0B0",
+    fontSize: 14,
+    marginRight: 12,
   },
   logoutButton: {
     alignSelf: "center",
