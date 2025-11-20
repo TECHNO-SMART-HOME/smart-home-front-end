@@ -7,6 +7,7 @@ import "../global.css";
 // 1. Import your new Global Alert Component
 import GlobalFireAlert from "./components/GlobalFireAlert";
 import GlobalFloodAlert from "./components/GlobalFloodAlert";
+import GlobalSmartReminder from "./components/GlobalSmartReminder";
 import { NotificationSettingsProvider } from "../src/context/NotificationSettingsContext";
 import { LocationProvider } from "../src/context/LocationContext";
 
@@ -20,6 +21,7 @@ export default function RootLayout() {
             {/* Place the Alert here. It sits "invisible" on top of your App */}
             <GlobalFireAlert />
             <GlobalFloodAlert />
+            <GlobalSmartReminder />
 
             {/* Your Standard Navigation Stack */}
             <Stack screenOptions={{ headerShown: false }}>

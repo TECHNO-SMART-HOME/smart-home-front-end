@@ -5,14 +5,18 @@ import { Modal, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'reac
 import { useNotificationSettings } from '../../src/context/NotificationSettingsContext';
 import { fetchFireReadings } from '../../src/api/fireReadings';
 
+const FIRE_ALERT_AVAILABLE =
+  process.env.EXPO_PUBLIC_FIRE_ALERT_ENABLED === 'true';
+
 export default function GlobalFireAlert() {
   const [visible, setVisible] = useState(false);
   const [lastAlertId, setLastAlertId] = useState<string | null>(null);
   const router = useRouter();
   const { fireAlertEnabled } = useNotificationSettings();
+  const monitoringEnabled = FIRE_ALERT_AVAILABLE && fireAlertEnabled;
 
   const checkForFire = useCallback(async () => {
-    if (!fireAlertEnabled) return;
+    if (!monitoringEnabled) return;
 
     try {
       const data = await fetchFireReadings();
@@ -40,24 +44,32 @@ export default function GlobalFireAlert() {
     } catch (error) {
       // Silently fail if backend is offline (don't annoy user)
     }
-  }, [fireAlertEnabled, lastAlertId]);
+  }, [monitoringEnabled, lastAlertId]);
 
   useEffect(() => {
+    if (!monitoringEnabled) {
+      setVisible(false);
+      return;
+    }
     const interval = setInterval(checkForFire, 3000); // Check every 3 seconds
     return () => clearInterval(interval);
-  }, [checkForFire]);
+  }, [checkForFire, monitoringEnabled]);
 
   useEffect(() => {
-    if (!fireAlertEnabled && visible) {
+    if (!monitoringEnabled && visible) {
       setVisible(false);
     }
-  }, [fireAlertEnabled, visible]);
+  }, [monitoringEnabled, visible]);
 
   const handleDismiss = () => {
     setVisible(false);
     // Optional: Navigate to Home to see details
     router.push("/(tabs)/home"); 
   };
+
+  if (!FIRE_ALERT_AVAILABLE) {
+    return null;
+  }
 
   return (
     <Modal
