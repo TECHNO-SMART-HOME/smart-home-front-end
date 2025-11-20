@@ -17,7 +17,9 @@ export default function GlobalFloodAlert() {
 
   const checkForFloodRisk = useCallback(async () => {
     if (!floodAlertEnabled) {
-      // Reset acknowledgement so toggling back on can show alert again
+      if (visible) {
+        setVisible(false);
+      }
       if (acknowledgedAt !== null) {
         setAcknowledgedAt(null);
       }

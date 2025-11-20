@@ -1,50 +1,103 @@
-# Welcome to your Expo app 👋
+# Smart Home Front End
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, responsive smart home mobile application built with **Expo** and **React Native**. This application provides users with a secure interface to manage their smart home devices, receive critical safety alerts (Fire, Flood), and set smart reminders.
 
-## Get started
+## 🚀 Features
 
-1. Install dependencies
+*   **Secure Authentication**: User-friendly Login and Registration screens with "Remember Me" functionality.
+*   **Real-time Safety Alerts**:
+    *   **Global Fire Alert**: Immediate notifications and interface for fire detection.
+    *   **Global Flood Alert**: Critical alerts for water leakage or flooding.
+*   **Smart Reminders**: Set and manage reminders for various home tasks.
+*   **Home Dashboard**: Centralized hub for monitoring and controlling smart devices.
+*   **Modern UI/UX**: Sleek dark mode design with custom "Unna" typography and intuitive navigation.
 
-   ```bash
-   npm install
-   ```
+## 🛠 Tech Stack
 
-2. Start the app
+*   **Framework**: [Expo](https://expo.dev/) (React Native)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS) & React Native StyleSheet
+*   **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) (File-based routing)
+*   **Icons**: Lucide React & Expo Vector Icons
 
-   ```bash
-   npx expo start
-   ```
+## 📂 Project Structure
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+smart-home-front-end/
+├── app/                    # Main application source code
+│   ├── (tabs)/             # Tab-based navigation screens (Home, etc.)
+│   ├── components/         # Reusable UI components (Alerts, Reminders, etc.)
+│   ├── index.tsx           # Entry point (Authentication Screen)
+│   └── _layout.tsx         # Root layout configuration
+├── assets/                 # Images, fonts, and other static resources
+├── scripts/                # Utility scripts
+└── package.json            # Dependencies and scripts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🏁 Getting Started
 
-## Learn more
+Follow these steps to get the project running locally.
 
-To learn more about developing your project with Expo, look at the following resources:
+### Prerequisites
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+*   [Node.js](https://nodejs.org/) (LTS recommended)
+*   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-## Join the community
+### Installation
 
-Join our community of developers creating universal apps.
+1.  **Clone the repository**
+    ```bash
+    git clone <repository-url>
+    cd smart-home-front-end
+    ```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+### Running the App
+
+Start the development server:
+
+```bash
+npx expo start
+```
+
+In the output, you'll find options to open the app in:
+*   **Development Build**
+*   **Android Emulator**
+*   **iOS Simulator**
+*   **Expo Go**: Scan the QR code with your phone (Android/iOS) to run the app instantly.
+
+## ⚙️ Configuration
+
+This project uses environment variables for configuration. Create a `.env` file in the root directory (or modify the existing one) with the following keys:
+
+```env
+# The URL of your backend API
+# IMPORTANT: If testing on a physical device, use your computer's local IP address (e.g., http://192.168.1.x:3000) instead of localhost.
+EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:3000
+
+# OpenWeather API Key for weather data
+EXPO_PUBLIC_OPENWEATHER_API_KEY=your_api_key_here
+
+# Toggle for testing fire alerts (true/false)
+EXPO_PUBLIC_FIRE_ALERT_ENABLED=false
+```
+
+**Note:** After changing `.env` variables, you must restart the Expo server (`Ctrl + C` -> `npx expo start`) for changes to take effect.
+
+## 📱 Screens
+
+*   **Login/Register**: The initial screen for user authentication.
+*   **Home**: The main dashboard (accessible after login).
+*   **Alerts**: Modal or screen overlays for critical warnings.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
