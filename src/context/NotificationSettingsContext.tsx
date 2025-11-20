@@ -18,9 +18,9 @@ export function NotificationSettingsProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [fireAlertEnabled, setFireAlertEnabled] = useState(true);
+  const [fireAlertEnabled, setFireAlertEnabled] = useState(false);
   const [floodAlertEnabled, setFloodAlertEnabled] = useState(false);
-  const [reminderEnabled, setReminderEnabled] = useState(true);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
 
   const value = useMemo(
     () => ({
