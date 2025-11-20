@@ -3,7 +3,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOp
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useLocation } from "../context/LocationContext";
+import { useLocation } from "../../src/context/LocationContext";
 
 type CountryOption = {
   name: string;

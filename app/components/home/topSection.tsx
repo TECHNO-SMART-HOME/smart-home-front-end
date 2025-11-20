@@ -3,7 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { View, Text, Image } from 'react-native'
 import React from 'react'
-import { useLocation } from '../../context/LocationContext'
+import { useLocation } from '../../../src/context/LocationContext'
 
 const userName = "User"
 export default function topSection() {

@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useLocation } from "../context/LocationContext";
+import { useLocation } from "../../src/context/LocationContext";
 
 type CityListResponse = {
   error: boolean;

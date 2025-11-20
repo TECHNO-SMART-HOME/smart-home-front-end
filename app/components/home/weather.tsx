@@ -1,7 +1,7 @@
 import { View, Text, ActivityIndicator } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState, useEffect } from 'react'
-import { useLocation } from '../../context/LocationContext'
+import { useLocation } from '../../../src/context/LocationContext'
 
 interface WeatherData {
   temp: number

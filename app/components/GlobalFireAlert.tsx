@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
-import { useNotificationSettings } from '../context/NotificationSettingsContext';
+import { useNotificationSettings } from '../../src/context/NotificationSettingsContext';
 
 // REPLACE WITH YOUR IP
 const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/api/readings`;

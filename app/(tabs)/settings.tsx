@@ -10,8 +10,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useNotificationSettings } from "../context/NotificationSettingsContext";
-import { useLocation } from "../context/LocationContext";
+import { useNotificationSettings } from "../../src/context/NotificationSettingsContext";
+import { useLocation } from "../../src/context/LocationContext";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
