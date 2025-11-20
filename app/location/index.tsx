@@ -1,19 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useLocation } from "../../src/context/LocationContext";
-
-type CountryOption = {
-  name: string;
-  code: string;
-};
-
-type RestCountry = {
-  name: { common: string };
-  cca2: string;
-};
+import {
+  fetchCountries,
+  CountryOption,
+} from "../../src/api/locations";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
@@ -26,34 +28,23 @@ export default function CountryListScreen() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchCountries();
-  }, []);
-
-  const fetchCountries = async () => {
+  const loadCountries = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
-      const response = await fetch(
-        "https://restcountries.com/v3.1/all?fields=name,cca2,capital,capitalInfo,latlng",
-      );
-      const data: RestCountry[] = await response.json();
-
-      const mappedCountries: CountryOption[] = data
-        .map((country) => ({
-          name: country.name?.common ?? country.cca2,
-          code: country.cca2,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-      setCountries(mappedCountries);
+      const data = await fetchCountries();
+      setCountries(data);
     } catch (err) {
       console.error(err);
       setError("Unable to load countries. Check your connection and retry.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadCountries();
+  }, [loadCountries]);
 
   const filteredCountries = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -90,7 +81,7 @@ export default function CountryListScreen() {
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
-            onPress={fetchCountries}
+            onPress={loadCountries}
             activeOpacity={0.8}
           >
             <Text style={styles.retryText}>Try Again</Text>

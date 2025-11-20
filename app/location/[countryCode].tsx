@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -13,12 +13,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useLocation } from "../../src/context/LocationContext";
-
-type CityListResponse = {
-  error: boolean;
-  msg: string;
-  data?: string[];
-};
+import {
+  fetchCitiesByCountry,
+  fetchCityCoordinates,
+} from "../../src/api/locations";
 
 const bgColor = "#1C1E22";
 const cardColor = "#4B4B4D";
@@ -45,11 +43,7 @@ export default function CityPickerScreen() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchCities();
-  }, [decodedCountryName]);
-
-  const fetchCities = async () => {
+  const fetchCities = useCallback(async () => {
     if (!decodedCountryName) {
       setError("Missing country name. Please go back and select again.");
       setLoading(false);
@@ -59,53 +53,22 @@ export default function CityPickerScreen() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/cities",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ country: decodedCountryName }),
-        },
-      );
-      const data: CityListResponse = await response.json();
-      if (data.error || !data.data) {
-        throw new Error(data.msg || "Unable to load cities");
-      }
-      const filtered = Array.from(new Set(data.data)).filter(Boolean);
-      filtered.sort((a, b) => a.localeCompare(b));
-      setCities(filtered);
+      const list = await fetchCitiesByCountry(decodedCountryName);
+      setCities(list);
     } catch (err) {
       console.error(err);
       setError("Unable to load cities. Check your network and retry.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [decodedCountryName]);
 
-  const fetchCoordinates = async (city: string) => {
-    try {
-      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json${
-        countryCode ? `&country=${countryCode}` : ""
-      }`;
-      const response = await fetch(url);
-      const data = await response.json();
-      const match = data.results?.[0];
-      if (match) {
-        return {
-          latitude: match.latitude,
-          longitude: match.longitude,
-        };
-      }
-    } catch (err) {
-      console.error(err);
-    }
-    return null;
-  };
+  useEffect(() => {
+    fetchCities();
+  }, [fetchCities]);
 
   const handleCityPress = async (city: string) => {
-    const coords = await fetchCoordinates(city);
+    const coords = await fetchCityCoordinates(city, countryCode as string | undefined);
     if (!coords) {
       Alert.alert(
         "Location not found",
