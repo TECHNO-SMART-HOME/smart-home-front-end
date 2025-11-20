@@ -14,6 +14,7 @@ const reminders = [
   'Avoid plugging too many appliances into one extension cord.',
   "Don't leave the refrigerator door slightly open.",
   'Make sure all faucets are fully closed before going to bed.',
+  'Sleep early Gerald',
 ]
 
 export default function GlobalSmartReminder() {

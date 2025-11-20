@@ -13,12 +13,17 @@ const NotificationSettingsContext = createContext<
   NotificationSettingsContextValue | undefined
 >(undefined);
 
+const FIRE_ALERT_DEFAULT_ENABLED =
+  process.env.EXPO_PUBLIC_FIRE_ALERT_ENABLED === "true";
+
 export function NotificationSettingsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [fireAlertEnabled, setFireAlertEnabled] = useState(false);
+  const [fireAlertEnabled, setFireAlertEnabled] = useState(
+    FIRE_ALERT_DEFAULT_ENABLED,
+  );
   const [floodAlertEnabled, setFloodAlertEnabled] = useState(false);
   const [reminderEnabled, setReminderEnabled] = useState(false);
 
