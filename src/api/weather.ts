@@ -112,6 +112,52 @@ const fallbackWeatherInfo = (code?: number): WeatherInfo => {
   return wmoWeatherMap[code] ?? { icon: "weather-cloudy", description: "Cloudy" };
 };
 
+const getNearestPrecipitationProbability = (weather: any): number | undefined => {
+  const times: string[] | undefined = weather.hourly?.time;
+  const probabilities: number[] | undefined =
+    weather.hourly?.precipitation_probability;
+
+  if (!Array.isArray(times) || !Array.isArray(probabilities) || !times.length) {
+    return undefined;
+  }
+
+  const targetIso: string | undefined =
+    weather.current?.time ?? weather.current_weather?.time ?? times[0];
+  const target = targetIso ? Date.parse(targetIso) : Date.now();
+
+  let closestIndex = 0;
+  let closestDiff = Number.POSITIVE_INFINITY;
+
+  times.forEach((timestamp, index) => {
+    const diff = Math.abs(Date.parse(timestamp) - target);
+    if (diff < closestDiff) {
+      closestDiff = diff;
+      closestIndex = index;
+    }
+  });
+
+  const value = probabilities[closestIndex];
+  return typeof value === "number" ? Math.max(0, Math.round(value)) : undefined;
+};
+
+const fetchOpenMeteoPrecipitationChance = async (
+  latitude: number,
+  longitude: number,
+): Promise<number | undefined> => {
+  try {
+    const url = `${OPEN_METEO_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=precipitation_probability`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      return undefined;
+    }
+    const data = await response.json();
+    return getNearestPrecipitationProbability(data);
+  } catch (error) {
+    console.warn("Unable to fetch Open-Meteo precipitation probability", error);
+    return undefined;
+  }
+};
+
 async function fetchOpenMeteoWeather({
   latitude,
   longitude,
@@ -137,13 +183,11 @@ async function fetchOpenMeteoWeather({
       : undefined;
 
   const humidityValue = Math.round(weather.current?.relative_humidity_2m ?? 0);
-  const precipitationChance =
-    typeof weather.hourly?.precipitation_probability?.[0] === "number"
-      ? Math.round(weather.hourly.precipitation_probability[0])
-      : undefined;
+  const precipitationChance = getNearestPrecipitationProbability(weather);
+  const normalizedChance = precipitationChance ?? 0;
 
   const meetsFloodThresholds =
-    (precipitationChance ?? 0) >= 70 ||
+    normalizedChance >= 70 ||
     (windSpeed ?? 0) >= 60;
 
   return {
@@ -158,7 +202,7 @@ async function fetchOpenMeteoWeather({
       typeof weather.hourly?.cloud_cover?.[0] === "number"
         ? Math.round(weather.hourly.cloud_cover[0])
         : undefined,
-    precipitationChance,
+    precipitationChance: normalizedChance,
     isHeavyRain:
       heavyRainWmoCodes.has(wmoCode) || precipitationValue >= 10,
     meetsFloodThresholds,
@@ -209,11 +253,20 @@ export async function fetchCurrentWeather({
         ? Math.round(data.wind.speed)
         : undefined;
 
-    const precipitationProbability =
-      rainVolume > 0 ? Math.min(100, Math.round(rainVolume * 50)) : cloudiness;
+    let precipitationProbability =
+      rainVolume > 0 ? Math.min(100, Math.round(rainVolume * 50)) : undefined;
+
+    if (precipitationProbability === undefined) {
+      precipitationProbability = await fetchOpenMeteoPrecipitationChance(
+        latitude,
+        longitude,
+      );
+    }
+
+    const normalizedProbability = precipitationProbability ?? 0;
 
     const meetsFloodThresholds =
-      (precipitationProbability ?? 0) >= 70 ||
+      normalizedProbability >= 70 ||
       (windSpeedValue ?? 0) >= 60;
 
     return {
@@ -224,7 +277,7 @@ export async function fetchCurrentWeather({
       icon,
       windSpeed: windSpeedValue,
       cloudCover: cloudiness,
-      precipitationChance: precipitationProbability,
+      precipitationChance: normalizedProbability,
       isHeavyRain:
         heavyRainConditionIds.has(condition?.id ?? -1) || rainVolume >= 10,
       meetsFloodThresholds,
